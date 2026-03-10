@@ -1,0 +1,36 @@
+
+
+df <- read.csv("filtered_data_non_zero.csv", header = TRUE, stringsAsFactors = FALSE)
+
+df <- df[,8:16]
+
+pcaobj <- prcomp(t(df), scale = T)
+v <- pcaobj$sdev ^ 2
+contribution <- v/sum(v)
+head(pcaobj$x)
+
+library(ggplot2)
+df1 <- pcaobj$x[,1:2]  
+df1 <- as.data.frame(df1)
+
+type <- c("Vb5+ CD8T","Vb5+ CD8T","Vb5+ CD8T",
+          "mRNA_TetPos","mRNA_TetPos","mRNA_TetPos",
+          "PolyIC_TetPos","PolyIC_TetPos","PolyIC_TetPos"
+ 
+)
+
+df2<- cbind(df1,type)
+
+
+df3 <- df2[df2$type %in% c("mRNA_TetPos", "PolyIC_TetPos"), ]
+
+g <- ggplot(df2, aes(x=PC1, y= PC2, color=type))+
+  geom_point(size=6)+
+  labs(x="PC1")+
+  labs(y="PC2")+
+
+  theme_bw()
+
+g
+
+
